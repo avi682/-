@@ -28,6 +28,7 @@ window.PetSystem = {
 
     assets: {
         duck: { src: 'pixel_duck.png', facing: 'right' },
+        matan: { src: 'pixel_matan.png', facing: 'right' }, // Matan (New Duck)
         dragon: { src: 'pixel_dragon.png', facing: 'left' }, // Dragon faces left in new image
         cat: { src: 'pixel_cat.png', facing: 'left' }, // Cat faces left
         snake: { src: 'pixel_snake.png', facing: 'left' }, // Snake faces left
@@ -73,7 +74,7 @@ window.PetSystem = {
 
     setPet: function (name) {
         if (this.assets[name]) {
-            this.img.src = this.assets[name].src + '?v=' + Date.now() + '_mobile_fix';
+            this.img.src = this.assets[name].src + '?v=' + Date.now() + '_matan';
             this.currentPetFacing = this.assets[name].facing;
         }
     },
