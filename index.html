@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Win95 Weekly Scheduler</title>
+    <link href="https://fonts.cdnfonts.com/css/w95fa" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=taskbar_final_fix">
+    <style>
+        /* Win95 Select (Combobox) */
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: white;
+            border-top: 2px solid #808080;
+            border-left: 2px solid #808080;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            padding: 2px 20px 2px 4px;
+            /* Right padding for arrow */
+            border-radius: 0;
+            font-family: 'W95FA', 'MS Sans Serif', sans-serif;
+            font-size: 11px;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M0%200h16v16H0z%22%20fill%3D%22transparent%22%2F%3E%3Cpath%20fill%3D%22%23c0c0c0%22%20d%3D%22M1%201h14v14H1z%22%2F%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M12%207L8%2011%204%207h8z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M1%201h14v2H1zM1%201h2v14H1z%22%2F%3E%3Cpath%20fill%3D%22%23808080%22%20d%3D%22M1%2015h14v1H1zM15%201v14h1V1z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 2px center;
+            background-size: 16px 16px;
+        }
+
+        /* Force Taskbar Visibility */
+        .taskbar {
+            position: fixed !important;
+            bottom: 0px !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100vw !important;
+            height: 30px !important;
+            background: #c0c0c0 !important;
+            border-top: 2px solid #fff !important;
+            display: flex !important;
+            align-items: center !important;
+            padding: 2px !important;
+            z-index: 2147483647 !important;
+            /* Max Z-Index */
+            box-sizing: border-box !important;
+            transform: translateZ(0);
+            /* GPU promote */
+        }
+
+        /* Make sure body doesn't hide it */
+        body {
+            padding-bottom: 30px !important;
+            /* Make room */
+            overflow: hidden;
+            /* Keep hidden but ensure room */
+        }
+
+        .desktop {
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Ensure Start Button is visible too */
+        .start-btn {
+            display: flex !important;
+            align-items: center;
+            height: 22px;
+            border: 2px outset #ffffff;
+            background: #c0c0c0;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            color: black !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="taskbar">
+        <button class="start-btn">
+            <img src="https://win98icons.alexmeub.com/icons/png/windows_slanted-1.png" alt=""
+                style="width:16px; height:16px; display:inline-block; vertical-align:middle; margin-right:2px;">
+            <b>Start</b>
+        </button>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-window-btn active">
+            <img src="https://win98icons.alexmeub.com/icons/png/calendar-2.png" alt="" style="width:16px; height:16px;">
+            Weekly Scheduler
+        </div>
+        <div class="taskbar-spacer"></div>
+        <div class="taskbar-tray">
+            <div class="tray-icons">
+                <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20fill%3D%22black%22%20d%3D%22M8%200a8%208%200%201%200%208%208A8%208%200%200%200%208%200zM8%2014a6%206%200%201%201%206-6%206%206%200%200%201-6%206z%22%2F%3E%3Cpath%20fill%3D%22black%22%20d%3D%22M9%204H7v5h5V7H9z%22%2F%3E%3C%2Fsvg%3E"
+                    style="width:16px; height:16px;">
+            </div>
+            <div class="taskbar-clock" id="taskbar-clock">12:00 PM</div>
+        </div>
+    </div>
+    <div class="desktop">
+        <div class="window" id="main-window">
+            <div class="title-bar">
+                <div class="title-bar-text">Weekly Scheduler.exe</div>
+                <div class="title-bar-controls">
+                    <button aria-label="Minimize"></button>
+                    <button aria-label="Maximize"></button>
+                    <button aria-label="Close"></button>
+                </div>
+            </div>
+            <!-- Menu Bar -->
+            <div class="menu-bar">
+                <div class="menu-item-wrapper" id="menu-file-wrapper">
+                    <span id="menu-file"><u>F</u>ile</span>
+                    <div class="dropdown-menu hidden" id="dropdown-file">
+                        <div class="dropdown-item" id="menu-export-google" onclick="runExport()">Export to Google
+                            Calendar...</div>
+                        <div class="dropdown-item" id="menu-exit" onclick="runExit()">Exit</div>
+                    </div>
+                </div>
+                <div class="menu-item-wrapper" onclick="openSettings()">
+                    <span id="menu-settings"><u>S</u>ettings</span>
+                </div>
+                <div class="menu-item-wrapper" id="menu-pets-wrapper">
+                    <span id="menu-pets"><u>P</u>ets</span>
+                    <div class="dropdown-menu hidden" id="dropdown-pets">
+                        <div class="dropdown-item" onclick="selectPet('duck')">Duck</div>
+                        <div class="dropdown-item" onclick="selectPet('dragon')">Dragon</div>
+                        <div class="dropdown-item" onclick="selectPet('lion')">Lion</div>
+                        <div class="dropdown-item" onclick="selectPet('snake')">Snake</div>
+                        <div class="dropdown-item" onclick="selectPet('wolf')">Wolf</div>
+                        <div class="dropdown-item" onclick="selectPet('dog')">Dog</div>
+                        <div class="dropdown-item" onclick="selectPet('cow')">Cow</div>
+                    </div>
+                </div>
+
+                <div class="menu-item-wrapper" id="menu-help-wrapper">
+                    <span id="menu-help"><u>H</u>elp</span>
+                    <div class="dropdown-menu hidden" id="dropdown-help">
+                        <div class="dropdown-item" id="menu-tips" onclick="openTips()">How to Use...</div>
+                        <div class="dropdown-separator"></div>
+                        <div class="dropdown-item" id="menu-about" onclick="openAbout()">About Scheduler...</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Menu Bar End -->
+
+            <div class="scheduler-container">
+                <!-- Sidebar for Tasks -->
+                <div class="sidebar panel inset">
+                    <div class="sidebar-header">
+                        <h4>To-Do List</h4>
+                        <button id="add-task-btn" class="btn-icon" title="Add Task">+</button>
+                    </div>
+                    <div class="task-input-area hidden" id="task-input-area">
+                        <input type="text" id="new-task-input" placeholder="Task Name">
+                        <select id="new-task-category" style="width: 100%; margin: 2px 0;">
+                            <option value="yellow" style="background-color: #ffffdd;">General (Yellow)</option>
+                            <option value="red" style="background-color: #ff8080;">Study (Red)</option>
+                            <option value="blue" style="background-color: #6666ff; color: white;">Work (Blue)
+                            </option>
+                            <option value="green" style="background-color: #66ff66;">Personal (Green)</option>
+                            <option value="orange" style="background-color: #ffcc66;">Urgent (Orange)</option>
+                            <option value="purple" style="background-color: #cc66ff; color: white;">Hobby (Purple)
+                            </option>
+                        </select>
+
+                        <div style="display: flex; gap: 5px; align-items: center; margin-top: 5px;">
+                            <label style="font-size: 12px;">Hrs:</label>
+                            <input type="number" id="new-task-hrs" value="1" min="0" max="12" style="width: 40px;">
+                            <label style="font-size: 12px;">Min:</label>
+                            <input type="number" id="new-task-min" value="0" min="0" max="59" step="5"
+                                style="width: 40px;">
+                        </div>
+                        <div style="display: flex; justify-content: flex-end; margin-top: 5px;">
+                            <button id="confirm-add-task">Add</button>
+                        </div>
+                    </div>
+                    <div id="recycle-bin" ondragover="allowDrop(event)" ondrop="dropToBin(event)"
+                        title="Drag tasks here to delete">
+                        🗑️ Recycle Bin
+                    </div>
+                    <div id="task-list" class="task-list" ondragover="allowDrop(event)" ondrop="dropToSide(event)">
+                        <!-- Tasks go here -->
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="calendar-wrapper panel inset">
+                    <div class="calendar-header">
+                        <div class="day-col-header">Time</div>
+                        <div class="day-col-header">Sunday</div>
+                        <div class="day-col-header">Monday</div>
+                        <div class="day-col-header">Tuesday</div>
+                        <div class="day-col-header">Wednesday</div>
+                        <div class="day-col-header">Thursday</div>
+                        <div class="day-col-header">Friday</div>
+                        <div class="day-col-header">Shabat</div>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid">
+                        <!-- Time slots generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-bar inset">
+                <p class="status-field">Ready</p>
+                <p class="status-field">items: 0</p>
+            </div>
+        </div>
+    </div>
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal-overlay hidden">
+        <div class="window modal-window outbound">
+            <div class="title-bar">
+                <div class="title-bar-text">Schedule Settings</div>
+                <div class="title-bar-controls">
+                    <button class="close-modal" onclick="closeModals()">X</button>
+                </div>
+            </div>
+            <div class="window-body">
+                <fieldset>
+                    <legend>Lunch Time</legend>
+                    <div style="margin: 5px 0;">
+                        <input type="checkbox" id="lunch-enabled" checked>
+                        <label for="lunch-enabled">Show Lunch Time</label>
+                    </div>
+                    <div style="margin: 5px 0;">
+                        <label>Start:</label>
+                        <input type="number" id="lunch-start-hr" min="0" max="23" style="width: 35px">
+                        :
+                        <input type="number" id="lunch-start-min" min="0" max="59" step="5" style="width: 35px">
+
+                        <label style="margin-left: 10px;">End:</label>
+                        <input type="number" id="lunch-end-hr" min="0" max="23" style="width: 35px">
+                        :
+                        <input type="number" id="lunch-end-min" min="0" max="59" step="5" style="width: 35px">
+
+                        <label style="margin-left: 10px;">Color:</label>
+                        <div id="lunch-color-preview" class="color-preview-box"></div>
+                        <input type="hidden" id="lunch-color" value="#ffcc00">
+                        <div class="win95-palette" id="lunch-palette">
+                            <!-- 16 Standard VGA Colors -->
+                            <div class="color-swatch" style="background:#000000" data-col="#000000"
+                                onclick="pickColor('lunch', '#000000')"></div>
+                            <div class="color-swatch" style="background:#808080" data-col="#808080"
+                                onclick="pickColor('lunch', '#808080')"></div>
+                            <div class="color-swatch" style="background:#800000" data-col="#800000"
+                                onclick="pickColor('lunch', '#800000')"></div>
+                            <div class="color-swatch" style="background:#808000" data-col="#808000"
+                                onclick="pickColor('lunch', '#808000')"></div>
+                            <div class="color-swatch" style="background:#008000" data-col="#008000"
+                                onclick="pickColor('lunch', '#008000')"></div>
+                            <div class="color-swatch" style="background:#008080" data-col="#008080"
+                                onclick="pickColor('lunch', '#008080')"></div>
+                            <div class="color-swatch" style="background:#000080" data-col="#000080"
+                                onclick="pickColor('lunch', '#000080')"></div>
+                            <div class="color-swatch" style="background:#800080" data-col="#800080"
+                                onclick="pickColor('lunch', '#800080')"></div>
+                            <div class="color-swatch" style="background:#c0c0c0" data-col="#c0c0c0"
+                                onclick="pickColor('lunch', '#c0c0c0')"></div>
+                            <div class="color-swatch" style="background:#ff0000" data-col="#ff0000"
+                                onclick="pickColor('lunch', '#ff0000')"></div>
+                            <div class="color-swatch" style="background:#00ff00" data-col="#00ff00"
+                                onclick="pickColor('lunch', '#00ff00')"></div>
+                            <div class="color-swatch" style="background:#ffff00" data-col="#ffff00"
+                                onclick="pickColor('lunch', '#ffff00')"></div>
+                            <div class="color-swatch" style="background:#0000ff" data-col="#0000ff"
+                                onclick="pickColor('lunch', '#0000ff')"></div>
+                            <div class="color-swatch" style="background:#ff00ff" data-col="#ff00ff"
+                                onclick="pickColor('lunch', '#ff00ff')"></div>
+                            <div class="color-swatch" style="background:#00ffff" data-col="#00ffff"
+                                onclick="pickColor('lunch', '#00ffff')"></div>
+                            <div class="color-swatch" style="background:#ffffff" data-col="#ffffff"
+                                onclick="pickColor('lunch', '#ffffff')"></div>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Sleep Time</legend>
+                    <div style="margin: 5px 0;">
+                        <label>Start:</label>
+                        <input type="number" id="sleep-start-hr" min="0" max="23" style="width: 35px">
+                        :
+                        <input type="number" id="sleep-start-min" min="0" max="59" step="5" style="width: 35px">
+
+                        <label style="margin-left: 10px;">End:</label>
+                        <input type="number" id="sleep-end-hr" min="0" max="23" style="width: 35px">
+                        :
+                        <input type="number" id="sleep-end-min" min="0" max="59" step="5" style="width: 35px">
+
+                        <label style="margin-left: 10px;">Color:</label>
+                        <div id="sleep-color-preview" class="color-preview-box"></div>
+                        <input type="hidden" id="sleep-color" value="#cccccc">
+                        <div class="win95-palette" id="sleep-palette">
+                            <div class="color-swatch" style="background:#000000" data-col="#000000"
+                                onclick="pickColor('sleep', '#000000')"></div>
+                            <div class="color-swatch" style="background:#808080" data-col="#808080"
+                                onclick="pickColor('sleep', '#808080')"></div>
+                            <div class="color-swatch" style="background:#800000" data-col="#800000"
+                                onclick="pickColor('sleep', '#800000')"></div>
+                            <div class="color-swatch" style="background:#808000" data-col="#808000"
+                                onclick="pickColor('sleep', '#808000')"></div>
+                            <div class="color-swatch" style="background:#008000" data-col="#008000"
+                                onclick="pickColor('sleep', '#008000')"></div>
+                            <div class="color-swatch" style="background:#008080" data-col="#008080"
+                                onclick="pickColor('sleep', '#008080')"></div>
+                            <div class="color-swatch" style="background:#000080" data-col="#000080"
+                                onclick="pickColor('sleep', '#000080')"></div>
+                            <div class="color-swatch" style="background:#800080" data-col="#800080"
+                                onclick="pickColor('sleep', '#800080')"></div>
+                            <div class="color-swatch" style="background:#c0c0c0" data-col="#c0c0c0"
+                                onclick="pickColor('sleep', '#c0c0c0')"></div>
+                            <div class="color-swatch" style="background:#ff0000" data-col="#ff0000"
+                                onclick="pickColor('sleep', '#ff0000')"></div>
+                            <div class="color-swatch" style="background:#00ff00" data-col="#00ff00"
+                                onclick="pickColor('sleep', '#00ff00')"></div>
+                            <div class="color-swatch" style="background:#ffff00" data-col="#ffff00"
+                                onclick="pickColor('sleep', '#ffff00')"></div>
+                            <div class="color-swatch" style="background:#0000ff" data-col="#0000ff"
+                                onclick="pickColor('sleep', '#0000ff')"></div>
+                            <div class="color-swatch" style="background:#ff00ff" data-col="#ff00ff"
+                                onclick="pickColor('sleep', '#ff00ff')"></div>
+                            <div class="color-swatch" style="background:#00ffff" data-col="#00ffff"
+                                onclick="pickColor('sleep', '#00ffff')"></div>
+                            <div class="color-swatch" style="background:#ffffff" data-col="#ffffff"
+                                onclick="pickColor('sleep', '#ffffff')"></div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Add Daily Task</legend>
+                    <div style="margin: 5px 0;">
+                        <input type="text" id="daily-task-name" placeholder="Task Name"
+                            style="width: 100%; margin-bottom: 5px;">
+
+                        <div style="margin-bottom: 5px;">
+                            <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 5px;">
+                                <label>Color:</label>
+                                <div id="daily-task-color-preview" class="color-preview-box"></div>
+                                <input type="hidden" id="daily-task-color" value="#ffccff">
+                                <div class="win95-palette" id="daily-palette">
+                                    <div class="color-swatch" style="background:#ffccff" data-col="#ffccff"
+                                        onclick="pickColor('daily-task', '#ffccff')"></div>
+                                    <div class="color-swatch" style="background:#ccffff" data-col="#ccffff"
+                                        onclick="pickColor('daily-task', '#ccffff')"></div>
+                                    <div class="color-swatch" style="background:#ffffcc" data-col="#ffffcc"
+                                        onclick="pickColor('daily-task', '#ffffcc')"></div>
+                                    <div class="color-swatch" style="background:#ccffcc" data-col="#ccffcc"
+                                        onclick="pickColor('daily-task', '#ccffcc')"></div>
+                                    <div class="color-swatch" style="background:#ffcccc" data-col="#ffcccc"
+                                        onclick="pickColor('daily-task', '#ffcccc')"></div>
+                                    <div class="color-swatch" style="background:#ccccff" data-col="#ccccff"
+                                        onclick="pickColor('daily-task', '#ccccff')"></div>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; gap: 10px; align-items: center;">
+                                <div style="display:flex; gap:2px; align-items:center;">
+                                    <span style="font-size:10px;">Start:</span>
+                                    <input type="number" id="daily-task-hr" value="9" min="0" max="23"
+                                        style="width: 30px">
+                                    :
+                                    <input type="number" id="daily-task-min" value="0" min="0" max="59" step="5"
+                                        style="width: 30px">
+                                </div>
+                                <div style="display:flex; gap:2px; align-items:center;">
+                                    <span style="font-size:10px;">End:</span>
+                                    <input type="number" id="daily-task-end-hr" value="10" min="0" max="23"
+                                        style="width: 30px">
+                                    :
+                                    <input type="number" id="daily-task-end-min" value="0" min="0" max="59" step="5"
+                                        style="width: 30px">
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="addDailyTaskSettings()" style="width: 100%;">Add to Schedule</button>
+
+                        <div style="margin-top: 10px; border-top: 1px dotted gray; padding-top: 5px;">
+                            <label>Active Daily Tasks:</label>
+                            <div id="daily-zones-list"
+                                style="margin-top:5px; max-height: 100px; overflow-y: auto; background: white; border: 2px inset white; padding: 2px;">
+                                <!-- Items rendered by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div style="margin-top: 5px; border-top: 1px solid gray; padding-top: 5px; display: flex; gap: 5px;">
+                    <button id="clear-calendar-btn" onclick="runClearCalendar()" style="flex: 1;">Clear
+                        Calendar</button>
+                    <button id="delete-all-btn" onclick="runDeleteAll()" style="flex: 1; color: red;">Delete All
+                        Tasks</button>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 5px; margin-top: 10px;">
+                    <button id="save-settings" onclick="saveSettings()">OK</button>
+                    <button class="close-modal" onclick="closeModals()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Task Properties Modal -->
+    <div id="properties-modal" class="modal-overlay hidden">
+        <div class="window modal-window" style="width: 300px;">
+            <div class="title-bar">
+                <div class="title-bar-text">Task Properties</div>
+                <div class="title-bar-controls">
+                    <button class="close-modal" onclick="closeModals()" aria-label="Close">X</button>
+                </div>
+            </div>
+            <div class="window-body">
+                <div class="field-row">
+                    <label for="prop-title">Title:</label>
+                    <input type="text" id="prop-title" style="width: 100%;">
+                </div>
+                <div class="field-row" style="margin-top: 5px;">
+                    <label for="prop-description">Description:</label>
+                    <textarea id="prop-description"
+                        style="width: 100%; height: 50px; resize: vertical; font-family: inherit; font-size: 11px;"
+                        placeholder="Add notes..."></textarea>
+                </div>
+                <div class="field-row" style="margin-top: 5px;">
+                    <label for="prop-category">Category:</label>
+                    <select id="prop-category">
+                        <option value="yellow">General</option>
+                        <option value="red">Study</option>
+                        <option value="blue">Work</option>
+                        <option value="green">Personal</option>
+                        <option value="orange">Urgent</option>
+                        <option value="purple">Hobby</option>
+                    </select>
+                    <label for="prop-color" style="margin-left: 10px;">Color:</label>
+                    <div id="prop-color-preview" class="color-preview-box" style="vertical-align: middle;"></div>
+                    <input type="hidden" id="prop-color">
+                    <div class="win95-palette" id="prop-palette" style="margin-top: 5px;">
+                        <div class="color-swatch" style="background:#ffffdd" data-col="#ffffdd"
+                            onclick="pickColor('prop', '#ffffdd')"></div> <!-- Yellow Note -->
+                        <div class="color-swatch" style="background:#ff8080" data-col="#ff8080"
+                            onclick="pickColor('prop', '#ff8080')"></div>
+                        <div class="color-swatch" style="background:#6666ff" data-col="#6666ff"
+                            onclick="pickColor('prop', '#6666ff')"></div>
+                        <div class="color-swatch" style="background:#66ff66" data-col="#66ff66"
+                            onclick="pickColor('prop', '#66ff66')"></div>
+                        <div class="color-swatch" style="background:#ffcc66" data-col="#ffcc66"
+                            onclick="pickColor('prop', '#ffcc66')"></div>
+                        <div class="color-swatch" style="background:#cc66ff" data-col="#cc66ff"
+                            onclick="pickColor('prop', '#cc66ff')"></div>
+                        <div class="color-swatch" style="background:#ffffff" data-col="#ffffff"
+                            onclick="pickColor('prop', '#ffffff')"></div>
+                        <div class="color-swatch" style="background:#c0c0c0" data-col="#c0c0c0"
+                            onclick="pickColor('prop', '#c0c0c0')"></div>
+                    </div>
+                </div>
+
+                <div class="field-row" style="margin-top: 10px;">
+                    <label for="prop-hrs">Duration:</label>
+                    <input type="number" id="prop-hrs" min="0" max="23" style="width: 40px">
+                    <label>Hrs</label>
+                    <input type="number" id="prop-min" min="0" max="59" step="5" style="width: 40px">
+                    <label>Min</label>
+                </div>
+
+                <fieldset style="margin-top: 10px; padding: 5px;">
+                    <legend>Schedule</legend>
+                    <div class="field-row">
+                        <label for="prop-day">Day:</label>
+                        <select id="prop-day" style="width: 100px;">
+                            <option value="-1">Unscheduled</option>
+                            <option value="0">Sunday</option>
+                            <option value="1">Monday</option>
+                            <option value="2">Tuesday</option>
+                            <option value="3">Wednesday</option>
+                            <option value="4">Thursday</option>
+                            <option value="5">Friday</option>
+                            <option value="6">Shabat</option>
+                        </select>
+                    </div>
+                    <div class="field-row" style="margin-top: 5px;">
+                        <label>Start:</label>
+                        <input type="number" id="prop-start-hr" min="0" max="23" style="width: 35px">
+                        :
+                        <input type="number" id="prop-start-min" min="0" max="59" step="5" style="width: 35px">
+
+                        <label style="margin-left: 10px;">End:</label>
+                        <input type="number" id="prop-end-hr" min="0" max="23" style="width: 35px">
+                        :
+                        <input type="number" id="prop-end-min" min="0" max="59" step="5" style="width: 35px">
+                    </div>
+                    <div style="text-align: center; margin-top: 5px;">
+                        <button id="btn-make-daily" onclick="makeDaily()" style="width: 100%;">Copy to All Days</button>
+                    </div>
+                </fieldset>
+
+                <div class="field-row" style="margin-top: 10px;">
+                    <input type="checkbox" id="prop-completed">
+                    <label for="prop-completed">Mark as Finished</label>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                    <button id="btn-delete-task" onclick="deleteTaskFromProps()">Delete</button>
+                    <div>
+                        <button id="btn-save-props">OK</button>
+                        <button class="close-modal" onclick="closeModals()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Tips Modal -->
+    <div id="tips-modal" class="modal-overlay hidden">
+        <div class="window modal-window" style="width: 350px;">
+            <div class="title-bar">
+                <div class="title-bar-text">How to Use</div>
+                <div class="title-bar-controls">
+                    <button class="close-modal" onclick="closeModals()" aria-label="Close">X</button>
+                </div>
+            </div>
+            <div class="window-body">
+                <p><strong>Welcome to Win95 Scheduler!</strong></p>
+                <ul style="padding-left: 20px; text-align: left;">
+                    <li>Use <strong>Settings</strong> to set Lunch & Sleep times.</li>
+                    <li>Create tasks in the <strong>To-Do List</strong>.</li>
+                    <li><strong>Drag & Drop</strong> tasks onto the calendar.</li>
+                    <li>Double-click tasks to <strong>Edit</strong> or <strong>Finish</strong>.</li>
+                    <li>Export to Google Calendar via <strong>File</strong> menu.</li>
+                </ul>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="close-modal" onclick="closeModals()" style="width: 80px;">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="about-modal" class="modal-overlay hidden">
+        <div class="window modal-window" style="width: 300px;">
+            <div class="title-bar">
+                <div class="title-bar-text">About Scheduler</div>
+                <div class="title-bar-controls">
+                    <button class="close-modal" onclick="closeModals()" aria-label="Close">X</button>
+                </div>
+            </div>
+            <div class="window-body" style="text-align: center; align-items: center; justify-content: center;">
+                <p><strong>Win95 Scheduler v1.0</strong></p>
+                <p>Developed by Antigravity</p>
+                <br>
+                <button class="close-modal" onclick="closeModals()" style="width: 80px;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pet Settings Modal -->
+    <div id="pet-settings-modal" class="modal-overlay hidden">
+        <div class="window modal-window" style="width: 350px;">
+            <div class="title-bar">
+                <div class="title-bar-text">Pet Options</div>
+                <div class="title-bar-controls">
+                    <button class="close-modal" onclick="closeModals()" aria-label="X"></button>
+                </div>
+            </div>
+            <div class="window-body">
+                <fieldset style="margin-top: 5px; padding: 5px;">
+                    <legend>Size</legend>
+                    <input type="range" id="pet-size-range" min="32" max="96" step="16" value="48"
+                        onchange="updatePetSettings()">
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; margin-top: 2px;">
+                        <span>Small</span>
+                        <span>Medium</span>
+                        <span>Large</span>
+                        <span>Giant</span>
+                    </div>
+                </fieldset>
+
+                <fieldset style="margin-top: 10px; padding: 5px;">
+                    <legend>Jump Power</legend>
+                    <input type="range" id="pet-jump-range" min="5" max="25" step="5" value="15"
+                        onchange="updatePetSettings()">
+                    <div style="display: flex; justify-content: space-between; font-size: 10px; margin-top: 2px;">
+                        <span>Low</span>
+                        <span>Med</span>
+                        <span>High</span>
+                        <span>Super</span>
+                    </div>
+                </fieldset>
+
+                <div style="text-align: center; margin-top: 15px;">
+                    <button class="close-modal" onclick="closeModals()" style="width: 80px;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Waddling Duck Easter Egg -->
+    <!-- Living Pet System -->
+    <div id="pet-container"
+        style="position: fixed; z-index: 9999; width: 48px; height: 48px; pointer-events: auto; cursor: grab;">
+        <img src="pixel_duck.png" alt="pet"
+            style="width: 48px; height: 48px; image-rendering: pixelated; pointer-events: none;">
+    </div>
+
+    <script src="pet_system.js?v=999"></script>
+    <script src="script.js?v=8"></script>
+</body>
+
+</html>

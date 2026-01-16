@@ -1,0 +1,737 @@
+:root {
+    --win95-gray: #c0c0c0;
+    --win95-dark: #808080;
+    --win95-darker: #000000;
+    --win95-light: #ffffff;
+    --win95-teal: #008080;
+    --win95-blue-dark: #000080;
+    --win95-blue-light: #1084d0;
+    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-main);
+    background-color: var(--win95-teal);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* 3D Borders */
+.outset {
+    border-top: 2px solid var(--win95-light);
+    border-left: 2px solid var(--win95-light);
+    border-right: 2px solid var(--win95-darker);
+    border-bottom: 2px solid var(--win95-darker);
+    box-shadow: 1px 1px 0px var(--win95-dark) inset, -1px -1px 0px var(--win95-dark);
+}
+
+.inset {
+    border-top: 2px solid var(--win95-darker);
+    border-left: 2px solid var(--win95-darker);
+    border-right: 2px solid var(--win95-light);
+    border-bottom: 2px solid var(--win95-light);
+    box-shadow: 1px 1px 0px var(--win95-dark) inset, -1px -1px 0px var(--win95-dark);
+    background: #fff;
+}
+
+/* Window Styles */
+.window {
+    width: 90vw;
+    height: 85vh;
+    background-color: var(--win95-gray);
+    display: flex;
+    flex-direction: column;
+    padding: 3px;
+    border-top: 2px solid var(--win95-light);
+    border-left: 2px solid var(--win95-light);
+    border-right: 2px solid var(--win95-darker);
+    border-bottom: 2px solid var(--win95-darker);
+    box-shadow: 1px 1px 0 0 var(--win95-dark);
+}
+
+.title-bar {
+    background: linear-gradient(90deg, var(--win95-blue-dark), var(--win95-blue-light));
+    color: white;
+    padding: 3px 2px 3px 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.title-bar-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.title-bar-controls button {
+    width: 16px;
+    height: 14px;
+    background-color: var(--win95-gray);
+    border-top: 1px solid var(--win95-light);
+    border-left: 1px solid var(--win95-light);
+    border-right: 1px solid var(--win95-darker);
+    border-bottom: 1px solid var(--win95-darker);
+    padding: 0;
+    margin: 0;
+    font-size: 10px;
+    line-height: 11px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.title-bar-controls button:active {
+    border: 1px solid var(--win95-darker);
+    padding-top: 1px;
+    padding-left: 1px;
+}
+
+.window-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+    overflow: hidden;
+    /* Added to constrain children */
+    min-height: 0;
+    /* Added to constrain children */
+}
+
+/* ... menu bar ... */
+
+/* Scheduler Layout */
+.scheduler-container {
+    display: flex;
+    flex: 1;
+    gap: 10px;
+    overflow: hidden;
+    /* Ensure container doesn't scroll */
+    min-height: 0;
+    /* Critical for nested flex scrolling */
+}
+
+.sidebar {
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--win95-gray);
+    padding: 5px;
+    height: 100%;
+    /* Fill container */
+    overflow: hidden;
+    /* Constrain internal content */
+}
+
+.sidebar-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    padding-right: 2px;
+}
+
+.sidebar-header h4 {
+    margin: 0;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.btn-icon {
+    width: 14px;
+    height: 14px;
+    min-width: 14px;
+    font-weight: bold;
+    font-size: 10px;
+    padding: 0;
+    line-height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+}
+
+.task-list {
+    flex: 1;
+    overflow-y: auto;
+    background-color: white;
+    padding: 5px;
+    border: 2px solid;
+    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+    /* Inset manually to ensure it looks right inside the panel */
+    min-height: 0;
+}
+
+.calendar-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    overflow: hidden;
+    height: 100%;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr);
+    background-color: var(--win95-gray);
+    border-bottom: 2px solid var(--win95-darker);
+    flex-shrink: 0;
+    /* Keep header visible */
+    padding-right: 16px;
+    /* Offset for scrollbar alignment roughly */
+}
+
+.day-col-header {
+    padding: 5px;
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid var(--win95-light);
+    border-bottom: 1px solid var(--win95-light);
+    font-size: 12px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr);
+    overflow-y: scroll;
+    /* Force SCROLL to reserve space for scrollbar */
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+.time-slot-label {
+    background-color: var(--win95-gray);
+    border-right: 1px solid var(--win95-dark);
+    border-bottom: 1px solid var(--win95-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    height: 50px;
+}
+
+body {
+    background-color: var(--win95-teal);
+    background-image: url('background.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'W95FA', 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+    overflow: hidden;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 11px;
+}
+
+input,
+button,
+select,
+textarea {
+    font-family: 'W95FA', 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+    font-size: 11px;
+    -webkit-font-smoothing: none;
+}
+
+/* Time Slots */
+.time-slot {
+    border-bottom: 1px dotted #ccc;
+    border-right: 1px dotted #ccc;
+    position: relative;
+    /* For absolute positioning */
+    height: 50px;
+    padding: 2px;
+}
+
+.special-zone {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    /* pointer-events: none allows dropping on the slot behind it */
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.special-zone.lunch {
+    background: repeating-linear-gradient(45deg,
+            #f0f0f0,
+            #f0f0f0 10px,
+            #e0e0e0 10px,
+            #e0e0e0 20px);
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+
+.special-zone.sleep {
+    background-color: #ddd;
+    border-top: 1px solid #999;
+}
+
+/* Task Cards */
+.task-card {
+    background-color: #ffffdd;
+    /* Sticky note yellow */
+    border: 1px solid #777;
+    padding: 4px;
+    font-size: 12px;
+    cursor: grab;
+    margin-bottom: 4px;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+    user-select: none;
+    box-sizing: border-box;
+    /* Ensure padding/border doesn't break width */
+}
+
+.task-card:active {
+    border: 1px dotted black;
+}
+
+.task-title {
+    display: block;
+    font-weight: normal;
+}
+
+.task-desc-preview {
+    font-size: 9px;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 2px;
+    font-style: italic;
+}
+
+.task-card.selected {
+    border: 2px solid white;
+    outline: 1px dotted black;
+    /* Focus ring style */
+    z-index: 100 !important;
+}
+
+.task-card.completed {
+    text-decoration: line-through;
+    opacity: 0.7;
+    background-color: #e0e0e0 !important;
+    /* Grayed out override */
+    border-color: #999 !important;
+    color: #555 !important;
+}
+
+/* Controls */
+button {
+    background-color: var(--win95-gray);
+    border-top: 2px solid var(--win95-light);
+    border-left: 2px solid var(--win95-light);
+    border-right: 2px solid var(--win95-darker);
+    border-bottom: 2px solid var(--win95-darker);
+    padding: 4px 10px;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+button:active {
+    border-top: 2px solid var(--win95-darker);
+    border-left: 2px solid var(--win95-darker);
+    border-right: 2px solid var(--win95-light);
+    border-bottom: 2px solid var(--win95-light);
+    transform: translate(1px, 1px);
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 4px;
+    margin-bottom: 5px;
+    border: 2px solid;
+    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+    background: white;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.status-bar {
+    height: 25px;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    gap: 5px;
+    background-color: var(--win95-gray);
+}
+
+.status-field {
+    border: 1px solid;
+    border-color: var(--win95-dark) var(--win95-light) var(--win95-light) var(--win95-dark);
+    padding: 0 5px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    margin: 0;
+    flex: 1;
+}
+
+.status-field:first-child {
+    flex: 2;
+}
+
+/* Scrollbar styling for Webkit */
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+    background-color: var(--win95-gray);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--win95-gray);
+    border-top: 1px solid var(--win95-light);
+    border-left: 1px solid var(--win95-light);
+    border-right: 1px solid var(--win95-darker);
+    border-bottom: 1px solid var(--win95-darker);
+}
+
+::-webkit-scrollbar-button {
+    background-color: var(--win95-gray);
+    width: 16px;
+    height: 16px;
+    border-top: 1px solid var(--win95-light);
+    border-left: 1px solid var(--win95-light);
+    border-right: 1px solid var(--win95-darker);
+    border-bottom: 1px solid var(--win95-darker);
+}
+
+/* Colors */
+.task-card.red {
+    background-color: #ff8080;
+    border-color: #aa0000;
+}
+
+.task-card.blue {
+    background-color: #6666ff;
+    color: white;
+    border-color: #000088;
+}
+
+.task-card.green {
+    background-color: #66ff66;
+    border-color: #008800;
+}
+
+.task-card.orange {
+    background-color: #ffcc66;
+    border-color: #cc8800;
+}
+
+.task-card.purple {
+    background-color: #cc66ff;
+    color: white;
+    border-color: #880088;
+}
+
+.task-card.yellow {
+    background-color: #ffffdd;
+}
+
+/* Grid Special Slots */
+
+.menu-item-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-bar span {
+    padding: 2px 8px;
+    margin-right: 2px;
+    display: block;
+    /* Ensure it behaves well in wrapper */
+}
+
+.menu-bar span:hover {
+    background-color: var(--win95-blue-dark);
+    color: white;
+    cursor: default;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    background-color: var(--win95-gray);
+    border-top: 2px solid var(--win95-light);
+    border-left: 2px solid var(--win95-light);
+    border-right: 2px solid var(--win95-darker);
+    border-bottom: 2px solid var(--win95-darker);
+    padding: 2px;
+    z-index: 1000;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-item {
+    padding: 4px 15px;
+    font-size: 12px;
+    cursor: default;
+    color: black;
+    white-space: nowrap;
+}
+
+.dropdown-item:hover {
+    background-color: var(--win95-blue-dark);
+    color: white;
+}
+
+.dropdown-separator {
+    height: 1px;
+    background-color: #808080;
+    border-bottom: 1px solid white;
+    margin: 3px 2px;
+}
+
+.time-slot.sleep {
+    background-color: var(--win95-blue-dark);
+}
+
+.time-slot.lunch {
+    background-color: #d3d3d3;
+    /* Gray */
+    background-image: linear-gradient(45deg, #bbb 25%, transparent 25%, transparent 75%, #bbb 75%, #bbb),
+        linear-gradient(45deg, #bbb 25%, transparent 25%, transparent 75%, #bbb 75%, #bbb);
+    background-size: 4px 4px;
+    background-position: 0 0, 2px 2px;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-window {
+    width: 300px;
+    height: auto;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+fieldset {
+    border: 1px solid var(--win95-light);
+    border-top-color: var(--win95-darker);
+    border-left-color: var(--win95-darker);
+    margin-bottom: 10px;
+}
+
+legend {
+    margin-left: 10px;
+    padding: 0 5px;
+}
+
+label {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+input[type="number"] {
+    background: white;
+    border: 2px solid;
+    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+}
+
+/* Win95 Color Picker */
+.win95-palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    background: var(--win95-gray);
+    padding: 2px;
+    border: 2px solid;
+    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+    width: 140px;
+    /* Fits 8 cols approx */
+}
+
+.color-swatch {
+    width: 15px;
+    height: 15px;
+    border-top: 1px solid var(--win95-light);
+    border-left: 1px solid var(--win95-light);
+    border-right: 1px solid var(--win95-darker);
+    border-bottom: 1px solid var(--win95-darker);
+    cursor: pointer;
+}
+
+.color-swatch:active,
+.color-swatch.selected {
+    border-top: 1px solid var(--win95-darker);
+    border-left: 1px solid var(--win95-darker);
+    border-right: 1px solid var(--win95-light);
+    border-bottom: 1px solid var(--win95-light);
+    box-shadow: inset 1px 1px 0 black;
+    /* Deep press effect */
+}
+
+.color-preview-box {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+    background: #ccc;
+}
+
+/* Recycle Bin */
+#recycle-bin {
+    margin-top: 10px;
+    padding: 15px;
+    border: 2px solid;
+    border-color: var(--win95-darker) var(--win95-light) var(--win95-light) var(--win95-darker);
+    background: #ffffff;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: default;
+    background-image: linear-gradient(45deg, #ffffff 25%, #f0f0f0 25%, #f0f0f0 50%, #ffffff 50%, #ffffff 75%, #f0f0f0 75%, #f0f0f0 100%);
+    background-size: 20px 20px;
+}
+
+#recycle-bin:hover {
+    background-color: #ffcccc;
+}
+
+/* Taskbar */
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28px;
+    background: #c0c0c0;
+    border-top: 1px solid #dfdfdf;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    box-shadow: 0 -1px 0 #ffffff inset;
+    /* highlight top edge */
+    z-index: 9999;
+}
+
+.start-btn {
+    display: flex;
+    align-items: center;
+    height: 22px;
+    margin-right: 2px;
+    padding: 2px 4px;
+    border: 2px outset #ffffff;
+    background: #c0c0c0;
+    font-weight: bold;
+    font-family: 'Segoe UI', sans-serif;
+    /* close enough */
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.start-btn:active {
+    border-style: inset;
+}
+
+.taskbar-divider {
+    width: 2px;
+    height: 20px;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #ffffff;
+    margin: 0 4px;
+}
+
+.taskbar-window-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 22px;
+    min-width: 150px;
+    padding: 2px 5px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    font-size: 12px;
+    cursor: default;
+}
+
+.taskbar-window-btn.active {
+    background: #e0e0e0;
+    border: 2px inset #ffffff;
+    font-weight: bold;
+    background-image: linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd),
+        linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%, #ddd);
+    background-size: 2px 2px;
+    background-position: 0 0, 1px 1px;
+}
+
+.taskbar-spacer {
+    flex: 1;
+}
+
+.taskbar-tray {
+    height: 22px;
+    border: 2px inset #ffffff;
+    background: #c0c0c0;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    margin-left: 2px;
+    gap: 5px;
+}
+
+.taskbar-clock {
+    font-size: 12px;
+}
+
+
+/* Pet System */
+#pet-container {
+    /* Position controlled by JS now */
+    filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5));
+    touch-action: none;
+    user-select: none;
+}
+
+#pet-container.dragging {
+    cursor: grabbing !important;
+    opacity: 0.8;
+    filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5));
+}
+
+#pet-container img {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    transform-origin: center bottom;
+    transition: transform 0.1s;
+}
+
+/* Walking Bob Effect (JS will toggle this class or we keep simple CSS bob) */
+@keyframes petBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+.pet-walking img {
+    animation: petBob 0.3s infinite;
+}
