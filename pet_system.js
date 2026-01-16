@@ -28,12 +28,11 @@ window.PetSystem = {
 
     assets: {
         duck: { src: 'pixel_duck.png', facing: 'right' },
-        dragon: { src: 'pixel_dragon.png', facing: 'right' },
-        lion: { src: 'pixel_lion.png', facing: 'left' },
-        snake: { src: 'pixel_snake.png', facing: 'left' },
-        wolf: { src: 'pixel_wolf.png', facing: 'right' },
-        dog: { src: 'pixel_dog.png', facing: 'right' },
-        cow: { src: 'pixel_cow.png', facing: 'left' }
+        dragon: { src: 'pixel_dragon.png', facing: 'left' }, // Dragon faces left in new image
+        cat: { src: 'pixel_cat.png', facing: 'left' }, // Cat faces left
+        snake: { src: 'pixel_snake.png', facing: 'left' }, // Snake faces left
+        wolf: { src: 'pixel_wolf.png', facing: 'left' }, // Wolf faces left
+        cow: { src: 'pixel_cow.png', facing: 'left' } // Cow faces left
     },
 
     init: function () {
@@ -61,7 +60,7 @@ window.PetSystem = {
 
     setPet: function (name) {
         if (this.assets[name]) {
-            this.img.src = this.assets[name].src + '?v=' + Date.now() + '_clean';
+            this.img.src = this.assets[name].src + '?v=' + Date.now() + '_update3';
             this.currentPetFacing = this.assets[name].facing;
         }
     },
