@@ -54,13 +54,26 @@ window.PetSystem = {
         window.addEventListener('mousemove', this.onMouseMove.bind(this));
         window.addEventListener('mouseup', this.onMouseUp.bind(this));
 
+        // Touch Events (Mobile)
+        this.el.addEventListener('touchstart', (e) => {
+            if (e.cancelable) e.preventDefault();
+            this.onMouseDown(e.touches[0]);
+        }, { passive: false });
+
+        window.addEventListener('touchmove', (e) => {
+            if (this.state === 'dragging' && e.cancelable) e.preventDefault();
+            this.onMouseMove(e.touches[0]);
+        }, { passive: false });
+
+        window.addEventListener('touchend', this.onMouseUp.bind(this));
+
         // Start Loop
         requestAnimationFrame(this.update.bind(this));
     },
 
     setPet: function (name) {
         if (this.assets[name]) {
-            this.img.src = this.assets[name].src + '?v=' + Date.now() + '_update3';
+            this.img.src = this.assets[name].src + '?v=' + Date.now() + '_mobile_fix';
             this.currentPetFacing = this.assets[name].facing;
         }
     },
