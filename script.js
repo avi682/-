@@ -1273,3 +1273,118 @@ try {
     console.error("Initialization Error:", err);
     alert("Scheduler Error: " + err.message);
 }
+
+// Window Management System
+const WindowManager = {
+    states: {}, // Store previous states for restore
+
+    minimize: function (id) {
+        const win = document.getElementById(id);
+        if (win) {
+            win.classList.add('minimized');
+            win.classList.remove('active');
+            // Update taskbar visuals if needed
+            const btn = document.querySelector(`.taskbar-window-btn[data-window="${id}"]`);
+            if (btn) btn.classList.remove('active');
+        }
+    },
+
+    maximize: function (id) {
+        const win = document.getElementById(id);
+        if (win) {
+            if (win.classList.contains('maximized')) {
+                // Restore
+                win.classList.remove('maximized');
+            } else {
+                // Maximize
+                win.classList.add('maximized');
+            }
+        }
+    },
+
+    close: function (id) {
+        const win = document.getElementById(id);
+        if (win) {
+            win.style.display = 'none'; // Hard hide
+            win.classList.remove('active');
+            // Remove from taskbar if dynamic (future feature)
+        }
+    },
+
+    open: function (id) {
+        const win = document.getElementById(id);
+        if (win) {
+            win.style.display = 'flex'; // Make sure it's visible if closed
+            win.classList.remove('minimized');
+
+            // Bring to front logic could go here
+            document.querySelectorAll('.window').forEach(w => w.style.zIndex = 10);
+            win.style.zIndex = 20;
+
+            // Highlight taskbar
+            document.querySelectorAll('.taskbar-window-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.querySelector(`.taskbar-window-btn[data-window="${id}"]`);
+            if (btn) btn.classList.add('active');
+        }
+    }
+};
+
+// Global hooks for HTML buttons
+window.winMin = (id) => WindowManager.minimize(id);
+window.winMax = (id) => WindowManager.maximize(id);
+window.winClose = (id) => WindowManager.close(id);
+window.openApp = (id) => WindowManager.open(id);
+
+
+// Grade Calculator Logic
+let gradeCourses = [];
+
+window.addGrade = function () {
+    const name = document.getElementById('gc-course').value.trim();
+    const grade = parseFloat(document.getElementById('gc-grade').value);
+    const credits = parseFloat(document.getElementById('gc-credits').value);
+
+    if (!name || isNaN(grade) || isNaN(credits)) {
+        alert("Please fill in valid data.");
+        return;
+    }
+
+    gradeCourses.push({ name, grade, credits });
+    document.getElementById('gc-course').value = '';
+    document.getElementById('gc-grade').value = '';
+
+    renderGrades();
+}
+
+window.clearGrades = function () {
+    if (confirm("Clear all grades?")) {
+        gradeCourses = [];
+        renderGrades();
+    }
+}
+
+function renderGrades() {
+    const list = document.getElementById('gc-list');
+    list.innerHTML = '';
+    let totalScore = 0;
+    let totalCredits = 0;
+
+    gradeCourses.forEach((c, idx) => {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.borderBottom = '1px solid #eee';
+        row.style.padding = '2px';
+        row.style.fontSize = '11px';
+
+        row.innerHTML = `<span>${c.name} (${c.credits} pts)</span> <span>${c.grade}</span>`;
+        list.appendChild(row);
+
+        totalScore += c.grade * c.credits;
+        totalCredits += c.credits;
+    });
+
+    const avg = totalCredits > 0 ? (totalScore / totalCredits) : 0;
+    document.getElementById('gc-average').innerText = avg.toFixed(2);
+}
+
