@@ -1273,3 +1273,15 @@ try {
     console.error("Initialization Error:", err);
     alert("Scheduler Error: " + err.message);
 }
+
+// Dark Mode Toggle
+window.toggleDarkMode = function() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('win95_dark_mode', isDark);
+}
+
+// Load Dark Mode Preference
+if (localStorage.getItem('win95_dark_mode') === 'true') {
+    document.body.classList.add('dark-mode');
+}

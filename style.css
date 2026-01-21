@@ -9,6 +9,43 @@
     --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body.dark-mode {
+    --win95-gray: #333333;
+    --win95-dark: #1a1a1a;
+    --win95-darker: #999999;
+    --win95-light: #555555;
+    --win95-teal: #004040;
+    color: #e0e0e0;
+}
+
+body.dark-mode .window {
+    box-shadow: 1px 1px 0 0 #000;
+}
+
+body.dark-mode .inset {
+    background: #222;
+    color: #fff;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background-color: #444;
+    color: white;
+}
+
+body.dark-mode .task-list {
+    background-color: #222;
+}
+
+body.dark-mode .calendar-wrapper {
+    background-color: #222;
+}
+
+body.dark-mode .day-col-header {
+    border-color: var(--win95-light);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -219,6 +256,9 @@ body {
     height: 100vh;
     width: 100vw;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .window.maximized {
