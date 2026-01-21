@@ -33,5 +33,6 @@ files = glob.glob("pixel_*.png")
 for f in files:
     # Skip duck if user likes it, but re-processing shouldn't hurt if logic is sound.
     # Actually, user loves the duck, let's keep it safe.
-    # Process all
+    if "duck" in f:
+        continue
     remove_background_floodfill(f)

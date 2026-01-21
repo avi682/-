@@ -77,8 +77,7 @@
     </style>
 </head>
 
-<body>
-
+<body class="dark-mode">
     <div class="taskbar">
         <button class="start-btn">
             <img src="https://win98icons.alexmeub.com/icons/png/windows_slanted-1.png" alt=""
@@ -100,6 +99,9 @@
         </div>
     </div>
     <div class="desktop">
+        <button onclick="toggleDarkMode()" style="position: absolute; top: 10px; right: 10px; z-index: 2000;">
+            Dark Mode
+        </button>
         <div class="window" id="main-window">
             <div class="title-bar">
                 <div class="title-bar-text">Weekly Scheduler.exe</div>
@@ -121,12 +123,6 @@
                 </div>
                 <div class="menu-item-wrapper" onclick="openSettings()">
                     <span id="menu-settings"><u>S</u>ettings</span>
-                </div>
-                <div class="menu-item-wrapper" id="menu-view-wrapper">
-                    <span id="menu-view"><u>V</u>iew</span>
-                    <div class="dropdown-menu hidden" id="dropdown-view">
-                        <div class="dropdown-item" onclick="toggleDarkMode()">Toggle Dark Mode</div>
-                    </div>
                 </div>
                 <div class="menu-item-wrapper" id="menu-pets-wrapper">
                     <span id="menu-pets"><u>P</u>ets</span>

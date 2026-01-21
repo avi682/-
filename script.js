@@ -1275,13 +1275,17 @@ try {
 }
 
 // Dark Mode Toggle
-window.toggleDarkMode = function() {
+window.toggleDarkMode = function () {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
     localStorage.setItem('win95_dark_mode', isDark);
 }
 
-// Load Dark Mode Preference
-if (localStorage.getItem('win95_dark_mode') === 'true') {
+// Load Dark Mode Preference (Default to true if not set)
+const savedTheme = localStorage.getItem('win95_dark_mode');
+if (savedTheme === 'false') {
+    document.body.classList.remove('dark-mode');
+} else {
+    // Default or true
     document.body.classList.add('dark-mode');
 }

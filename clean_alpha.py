@@ -40,5 +40,5 @@ def clean_alpha_and_crop(image_path):
 
 files = glob.glob("pixel_*.png")
 for f in files:
-    # Process all
+    if "duck" in f: continue
     clean_alpha_and_crop(f)
