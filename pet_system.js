@@ -74,7 +74,7 @@ window.PetSystem = {
 
     setPet: function (name) {
         if (this.assets[name]) {
-            this.img.src = this.assets[name].src + '?v=' + Date.now() + '_matan';
+            this.img.src = this.assets[name].src + '?v=' + Date.now() + '_hitbox_v2';
             this.currentPetFacing = this.assets[name].facing;
         }
     },
@@ -209,8 +209,8 @@ window.PetSystem = {
             // Behavior Logic (Random movement)
             if (onGround) { // On Ground (Floor or Platform)
                 // Random Jump
-                if (Math.random() < 0.005) {
-                    this.vy = -this.jumpPower - Math.random() * 4;
+                if (Math.random() < 0.001) { // Reduced from 0.005
+                    this.vy = -this.jumpPower * 0.7; // Smaller jump
                 }
 
                 // Random Walk

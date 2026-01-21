@@ -213,6 +213,28 @@ body {
     position: relative;
 }
 
+.desktop {
+    z-index: 1;
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.window.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 34px) !important;
+    /* 30px taskbar + borders */
+    z-index: 1000 !important;
+    transform: none !important;
+}
+
+.window.minimized {
+    display: none !important;
+}
+
 .time-slot-label {
     background-color: var(--win95-gray);
     border-right: 1px solid var(--win95-dark);
@@ -705,18 +727,64 @@ input[type="number"] {
 }
 
 
+/* Rotation Prompt */
+#rotate-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #008080;
+    color: white;
+    z-index: 99999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 24px;
+    padding: 20px;
+}
+
+@media screen and (orientation: portrait) and (max-width: 768px) {
+    #rotate-message {
+        display: flex;
+    }
+
+    .window,
+    .taskbar {
+        display: none !important;
+    }
+}
+
 /* Pet System */
 #pet-container {
     /* Position controlled by JS now */
     filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.5));
     touch-action: none;
     user-select: none;
+    /* Increase Hitbox for Mobile without affecting layout */
+    padding: 20px;
+    margin: -20px;
+    /* Counteract padding so x/y logic stays roughy same */
 }
 
-#pet-container.dragging {
+#pet-container::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    bottom: -20px;
+    left: -20px;
+    right: -20px;
+}
+
+#pet-container img {
+    /* Ensure image ignores the padding for layout purposes if we want */
+    display: block;
+
     cursor: grabbing !important;
     opacity: 0.8;
-    filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.5));
+    filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
 }
 
 #pet-container img {
@@ -728,8 +796,15 @@ input[type="number"] {
 
 /* Walking Bob Effect (JS will toggle this class or we keep simple CSS bob) */
 @keyframes petBob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
 }
 
 .pet-walking img {
