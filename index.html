@@ -102,6 +102,13 @@
         <button onclick="toggleDarkMode()" style="position: absolute; top: 10px; right: 10px; z-index: 2000;">
             Dark Mode
         </button>
+        <!-- Pet Settings Desktop Shortcut -->
+        <div class="desktop-icon" onclick="openPetSettings()"
+            style="position: absolute; top: 50px; left: 20px; text-align: center; cursor: pointer; color: white; text-shadow: 1px 1px 1px black;">
+            <img src="pixel_duck.png"
+                style="width: 32px; height: 32px; image-rendering: pixelated; margin-bottom: 2px;">
+            <div style="font-size: 12px; font-family: 'W95FA', sans-serif;">Pet Options</div>
+        </div>
         <div class="window" id="main-window">
             <div class="title-bar">
                 <div class="title-bar-text">Weekly Scheduler.exe</div>
@@ -584,6 +591,21 @@
                         <span>Med</span>
                         <span>High</span>
                         <span>Super</span>
+                    </div>
+                </fieldset>
+
+                <fieldset style="margin-top: 10px; padding: 5px;">
+                    <legend>Choose Pet</legend>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; max-height: 100px; overflow-y: auto;">
+                        <button onclick="selectPet('duck')" style="text-align: center;">Duck</button>
+                        <button onclick="selectPet('matan')" style="text-align: center;">Matan</button>
+                        <button onclick="selectPet('cat')" style="text-align: center;">Cat</button>
+                        <button onclick="selectPet('dog')" style="text-align: center;">Dog</button>
+                        <button onclick="selectPet('cow')" style="text-align: center;">Cow</button>
+                        <button onclick="selectPet('dragon')" style="text-align: center;">Dragon</button>
+                        <button onclick="selectPet('snake')" style="text-align: center;">Snake</button>
+                        <button onclick="selectPet('wolf')" style="text-align: center;">Wolf</button>
                     </div>
                 </fieldset>
 

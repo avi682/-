@@ -29,10 +29,25 @@ def remove_background_floodfill(image_path):
         print(f"Error processing {image_path}: {e}")
 
 # Process all pixel_*.png files
+# Process all pixel_*.png files
 files = glob.glob("pixel_*.png")
 for f in files:
-    # Skip duck if user likes it, but re-processing shouldn't hurt if logic is sound.
-    # Actually, user loves the duck, let's keep it safe.
-    if "duck" in f:
-        continue
+    # Process ALL pets including duck
     remove_background_floodfill(f)
+
+    # Secondary pass: Force black to transparent if floodfill missed it
+    try:
+        img = Image.open(f).convert("RGBA")
+        datas = img.getdata()
+        new_data = []
+        for item in datas:
+            # If pixel is black (allowing slight variance), make it transparent
+            if item[0] < 10 and item[1] < 10 and item[2] < 10:
+                new_data.append((0, 0, 0, 0))
+            else:
+                new_data.append(item)
+        img.putdata(new_data)
+        img.save(f, "PNG")
+        print(f"Refined black removal: {f}")
+    except Exception as e:
+        print(f"Error refining {f}: {e}")
