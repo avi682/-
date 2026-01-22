@@ -42,7 +42,7 @@ for f in files:
         new_data = []
         for item in datas:
             # If pixel is black (allowing slight variance), make it transparent
-            if item[0] < 10 and item[1] < 10 and item[2] < 10:
+            if item[0] < 30 and item[1] < 30 and item[2] < 30:
                 new_data.append((0, 0, 0, 0))
             else:
                 new_data.append(item)
